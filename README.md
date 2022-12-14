@@ -11,4 +11,4 @@
 ![a](./img/vscode-wsl.png)
 - open a terminal
     - [install docker](https://nickjanetakis.com/blog/install-docker-in-wsl-2-without-docker-desktop)
-    - [install minikube](https://minikube.sigs.k8s.io/docs/drivers/)
+    - [install minikube](https://minikube.sigs.k8s.io/docs/start/)
