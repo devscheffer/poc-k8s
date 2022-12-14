@@ -10,5 +10,5 @@
 - Access wsl through vscode
 ![a](./img/vscode-wsl.png)
 - open a terminal
-    - [install docker](https://docs.docker.com/desktop/install/ubuntu/)
+    - [install docker](https://nickjanetakis.com/blog/install-docker-in-wsl-2-without-docker-desktop)
     - [install minikube](https://minikube.sigs.k8s.io/docs/drivers/)
