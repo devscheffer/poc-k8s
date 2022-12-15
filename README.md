@@ -8,7 +8,7 @@
     - ubuntu:22.04
     - wsl2
 - Access wsl through vscode
-![a](./img/vscode-wsl.png)
+![screenshot](./docs/img/vscode-wsl.png)
 - open a terminal
     - [install docker](https://nickjanetakis.com/blog/install-docker-in-wsl-2-without-docker-desktop)
     - [install minikube](https://minikube.sigs.k8s.io/docs/start/)
@@ -18,11 +18,18 @@
     ```shell
     git clone git@github.com:devscheffer/poc-k8s.git
     ```
+    - [install helm](https://helm.sh/docs/intro/install/)
 
 ## Tools
 
 - [x] Airbyte
-- [ ] Airflow
+- [x] Airflow
+  - [Installation using helm](https://airflow.apache.org/docs/helm-chart/stable/index.html)
+  
+    ```shell
+    kubectl port-forward svc/airflow-webserver 8080:8080 --namespace airflow
+    ```
+    http://localhost:8080
 - [ ] Spark
 - [ ] S3
 - [ ] Iceberg
