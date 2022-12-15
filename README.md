@@ -27,3 +27,12 @@
 - [ ] S3
 - [ ] Iceberg
 - [ ] Snowflake
+
+# Documentation
+
+https://jamesdefabia.github.io/docs/user-guide/kubectl/kubectl_explain/
+
+```shell
+kubectl explain <RESOURCE>
+kubectl explain namespace
+```
