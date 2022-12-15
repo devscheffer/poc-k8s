@@ -18,3 +18,12 @@
     ```shell
     git clone git@github.com:devscheffer/poc-k8s.git
     ```
+
+## Tools
+
+- [x] Airbyte
+- [ ] Airflow
+- [ ] Spark
+- [ ] S3
+- [ ] Iceberg
+- [ ] Snowflake
