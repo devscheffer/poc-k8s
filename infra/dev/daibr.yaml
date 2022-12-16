@@ -3,3 +3,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: daibr-dev
+  labels:
+    team: daibr
+    environment: dev
+  annotations:
+    description: group used by the brazilian team for development
