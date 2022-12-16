@@ -12,6 +12,7 @@
 - open a terminal
     - [install docker](https://nickjanetakis.com/blog/install-docker-in-wsl-2-without-docker-desktop)
     - [install minikube](https://minikube.sigs.k8s.io/docs/start/)
+    - [install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
     - [generate ssh for github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
     - [add ssh to github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
     - clone the repo
