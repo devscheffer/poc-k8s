@@ -5,7 +5,7 @@ View [Kubernetes Documentation](https://docs.airbyte.io/deploying-airbyte/on-kub
 ### Deployment
 
 ```shell
-kubectl apply -k ./infra/dev/airbyte/overlays/stable
+kubectl apply -k ./infra/dev/airbyte/overlays/
 ```
 
 ### Web UI
