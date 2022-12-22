@@ -1,0 +1,10 @@
+resources:
+  - logs-persistenvolumeclaim.yaml
+  - airflow-rbac.yaml
+  - postgres-service.yaml
+  - postgres-deployment.yaml
+  - requirements-configmap.yaml
+  - airflow-envvars-configmap.yaml
+  - airflow-webserver-service.yaml
+  - airflow-webserver-deployment.yaml
+  - airflow-scheduler-deployment.yaml

@@ -1,0 +1,9 @@
+minikube kubectl -- apply -f ./../resources/logs-persistenvolumeclaim.yaml
+minikube kubectl -- apply -f ./../resources/airflow-rbac.yaml
+minikube kubectl -- apply -f ./../resources/postgres-service.yaml
+minikube kubectl -- apply -f ./../resources/postgres-deployment.yaml
+minikube kubectl -- apply -f ./../resources/requirements-configmap.yaml
+minikube kubectl -- apply -f ./../resources/airflow-envvars-configmap.yaml
+minikube kubectl -- apply -f ./../resources/airflow-webserver-service.yaml
+minikube kubectl -- apply -f ./../resources/airflow-webserver-deployment.yaml
+minikube kubectl -- apply -f ./../resources/airflow-scheduler-deployment.yaml

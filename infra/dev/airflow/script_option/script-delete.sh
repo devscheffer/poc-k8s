@@ -1,0 +1,9 @@
+minikube kubectl -- delete -f ./../resources/airflow-rbac.yaml
+minikube kubectl -- delete -f ./../resources/postgres-service.yaml
+minikube kubectl -- delete -f ./../resources/postgres-deployment.yaml
+minikube kubectl -- delete -f ./../resources/requirements-configmap.yaml
+minikube kubectl -- delete -f ./../resources/airflow-envvars-configmap.yaml
+minikube kubectl -- delete -f ./../resources/airflow-webserver-service.yaml
+minikube kubectl -- delete -f ./../resources/airflow-webserver-deployment.yaml
+minikube kubectl -- delete -f ./../resources/airflow-scheduler-deployment.yaml
+minikube kubectl -- delete -f ./../resources/logs-persistenvolumeclaim.yaml
