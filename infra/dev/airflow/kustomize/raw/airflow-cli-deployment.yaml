@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.27.0 (b0ed6a2c9)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: airflow-cli
+  name: airflow-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: airflow-cli
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.27.0 (b0ed6a2c9)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: airflow-cli
+    spec:
+      containers:
+        - args:
+            - bash
+            - -c
+            - airflow
+          env:
+            - name: AIRFLOW__API__AUTH_BACKENDS
+              value: airflow.api.auth.backend.basic_auth
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: redis://:@redis:6379/0
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: db+postgresql://airflow:airflow@postgres/airflow
+            - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
+              value: "true"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: CeleryExecutor
+            - name: AIRFLOW__CORE__FERNET_KEY
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "true"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              value: postgresql+psycopg2://airflow:airflow@postgres/airflow
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: postgresql+psycopg2://airflow:airflow@postgres/airflow
+            - name: CONNECTION_CHECK_MAX_COUNT
+              value: "0"
+            - name: _PIP_ADDITIONAL_REQUIREMENTS
+          image: apache/airflow:2.5.0
+          name: airflow-cli
+          resources: {}
+          volumeMounts:
+            - mountPath: /opt/airflow/dags
+              name: airflow-cli-claim0
+            - mountPath: /opt/airflow/logs
+              name: airflow-cli-claim1
+            - mountPath: /opt/airflow/plugins
+              name: airflow-cli-claim2
+      restartPolicy: Always
+      volumes:
+        - name: airflow-cli-claim0
+          persistentVolumeClaim:
+            claimName: airflow-cli-claim0
+        - name: airflow-cli-claim1
+          persistentVolumeClaim:
+            claimName: airflow-cli-claim1
+        - name: airflow-cli-claim2
+          persistentVolumeClaim:
+            claimName: airflow-cli-claim2
+status: {}

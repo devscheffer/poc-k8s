@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - airflow-webserver-service.yaml
+  - airflow-webserver-deployment.yaml
+  - airflow-webserver-claim0-persistentvolumeclaim.yaml
+  - airflow-webserver-claim1-persistentvolumeclaim.yaml
+  - airflow-webserver-claim2-persistentvolumeclaim.yaml

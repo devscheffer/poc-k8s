@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - flower-service.yaml
+  - flower-deployment.yaml
+  - flower-claim0-persistentvolumeclaim.yaml
+  - flower-claim1-persistentvolumeclaim.yaml
+  - flower-claim2-persistentvolumeclaim.yaml
