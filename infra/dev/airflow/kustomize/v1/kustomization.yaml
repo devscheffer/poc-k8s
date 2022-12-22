@@ -4,9 +4,9 @@ resources:
   - redis
   - postgres
   - init
-  - cli
   - scheduler
   - worker
   - trigger
   - webserver
-  - flower
+  # - cli
+  # - flower
