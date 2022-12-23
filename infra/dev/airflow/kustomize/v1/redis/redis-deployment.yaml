@@ -16,7 +16,7 @@ spec:
         io.kompose.service: redis
     spec:
       containers:
-        - image: redis:latest
+        - image: redis
           livenessProbe:
             exec:
               command:
@@ -28,6 +28,9 @@ spec:
           name: redis
           ports:
             - containerPort: 6379
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
       restartPolicy: Always
 status: {}

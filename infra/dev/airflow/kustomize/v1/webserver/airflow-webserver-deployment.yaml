@@ -51,7 +51,10 @@ spec:
           name: airflow-webserver
           ports:
             - containerPort: 8080
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: airflow-webserver-claim0

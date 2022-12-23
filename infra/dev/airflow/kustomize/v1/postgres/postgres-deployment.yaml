@@ -34,7 +34,10 @@ spec:
             failureThreshold: 5
             periodSeconds: 5
           name: postgres
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-db-volume

@@ -60,7 +60,10 @@ spec:
           name: flower
           ports:
             - containerPort: 5555
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: flower-claim0

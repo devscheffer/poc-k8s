@@ -11,7 +11,7 @@ kubectl apply -k ./infra/dev/airbyte/overlays/
 ### Web UI
 
 ```shell
-kubectl port-forward svc/airbyte-webapp-svc 8000:80 
+kubectl port-forward svc/airbyte-webapp-svc 8000:80
 ```
 
-http://localhost:8000 
+http://localhost:8000

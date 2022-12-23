@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: airbyte-webapp-svc
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 80
       protocol: TCP

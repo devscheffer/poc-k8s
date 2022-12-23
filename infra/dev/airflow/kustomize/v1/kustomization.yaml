@@ -4,9 +4,9 @@ resources:
   - redis
   - postgres
   - init
-  - scheduler
-  - worker
-  - trigger
-  - webserver
+  - scheduler # Process that decides when to execute tasks
+  - worker # Process that actually execute the logic of tasks
+  - trigger # Process that manages special operators/sensor
+  - webserver # Flask app that provides the Airflow UI
   # - cli
   # - flower

@@ -44,7 +44,10 @@ spec:
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
           name: airflow-cli
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
           volumeMounts:
             - mountPath: /opt/airflow/dags
               name: airflow-cli-claim0

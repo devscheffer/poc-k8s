@@ -110,7 +110,10 @@ spec:
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
           name: airflow-init
-          resources: {}
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
           volumeMounts:
             - mountPath: /sources
               name: airflow-init-claim0
