@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: spark
+  name: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: spark
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: spark
+    spec:
+      containers:
+        - env:
+            - name: SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED
+              value: "no"
+            - name: SPARK_MODE
+              value: master
+            - name: SPARK_RPC_AUTHENTICATION_ENABLED
+              value: "no"
+            - name: SPARK_RPC_ENCRYPTION_ENABLED
+              value: "no"
+            - name: SPARK_SSL_ENABLED
+              value: "no"
+          image: docker.io/bitnami/spark:3.3
+          name: spark
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+status: {}
