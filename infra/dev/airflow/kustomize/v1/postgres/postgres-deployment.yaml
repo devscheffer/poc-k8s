@@ -25,14 +25,6 @@ spec:
             - name: POSTGRES_USER
               value: airflow
           image: postgres:13
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - airflow
-            failureThreshold: 5
-            periodSeconds: 5
           name: postgres
           resources: 
             limits:

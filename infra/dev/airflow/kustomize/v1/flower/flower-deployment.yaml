@@ -48,15 +48,6 @@ spec:
               value: postgresql+psycopg2://airflow:airflow@postgres/airflow
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
-          livenessProbe:
-            exec:
-              command:
-                - curl
-                - --fail
-                - http://localhost:5555/
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 10
           name: flower
           ports:
             - containerPort: 5555

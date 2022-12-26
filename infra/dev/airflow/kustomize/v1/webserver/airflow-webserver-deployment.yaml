@@ -39,15 +39,6 @@ spec:
               value: postgresql+psycopg2://airflow:airflow@postgres/airflow
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
-          livenessProbe:
-            exec:
-              command:
-                - curl
-                - --fail
-                - http://localhost:8080/health
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 10
           name: airflow-webserver
           ports:
             - containerPort: 8080

@@ -1,10 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yaml
-    kompose.version: 1.27.0 (b0ed6a2c9)
-  creationTimestamp: null
   labels:
     io.kompose.service: airflow-triggerer
   name: airflow-triggerer
@@ -17,10 +13,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -f docker-compose.yaml
-        kompose.version: 1.27.0 (b0ed6a2c9)
-      creationTimestamp: null
       labels:
         io.kompose.service: airflow-triggerer
     spec:
@@ -47,13 +39,6 @@ spec:
               value: postgresql+psycopg2://airflow:airflow@postgres/airflow
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
-          livenessProbe:
-            exec:
-              command:
-                - airflow jobs check --job-type TriggererJob --hostname "${HOSTNAME}"
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 10
           name: airflow-triggerer
           resources: 
             limits:

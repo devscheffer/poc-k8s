@@ -17,14 +17,6 @@ spec:
     spec:
       containers:
         - image: redis
-          livenessProbe:
-            exec:
-              command:
-                - redis-cli
-                - ping
-            failureThreshold: 50
-            periodSeconds: 5
-            timeoutSeconds: 30
           name: redis
           ports:
             - containerPort: 6379

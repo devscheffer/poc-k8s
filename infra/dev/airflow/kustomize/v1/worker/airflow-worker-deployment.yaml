@@ -50,13 +50,6 @@ spec:
               value: "0"
             - name: _PIP_ADDITIONAL_REQUIREMENTS
           image: apache/airflow:2.5.0
-          livenessProbe:
-            exec:
-              command:
-                - celery --app airflow.executors.celery_executor.app inspect ping -d "celery@${HOSTNAME}"
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 10
           name: airflow-worker
           resources: 
             limits:
