@@ -1,0 +1,236 @@
+---
+# Source: airflow/templates/workers/worker-deployment.yaml
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+################################
+## Airflow Worker Deployment
+#################################
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: airflow-worker
+  labels:
+    tier: airflow
+    component: worker
+    release: airflow
+    chart: "airflow-1.7.0"
+    heritage: Helm
+spec:
+  serviceName: airflow-worker
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: airflow
+      component: worker
+      release: airflow
+  template:
+    metadata:
+      labels:
+        tier: airflow
+        component: worker
+        release: airflow
+      annotations:
+        checksum/metadata-secret: ae9b3f69ed343fffaa86b4ca5326b5d4f16c6f6f7b51a09a87dfce51dc81a4fa
+        checksum/result-backend-secret: 74e3e99feee51248d44224665d60fab543dd6b25ba95f04e6fcb0e5758342056
+        checksum/pgbouncer-config-secret: da52bd1edfe820f0ddfacdebb20a4cc6407d296ee45bcb500a6407e2261a5ba2
+        checksum/webserver-secret-key: 1e79f4aa22a1cac594bb0656a8ac86f9eefbf8ce4ebd270cb826a51900332ff6
+        checksum/kerberos-keytab: 18b80c0921e5c0af1e63eca1c3ce3fbc388d006bd2db5a7ab512dc8a563b6443
+        checksum/airflow-config: 22aecc0aac0878def48c3aee99162a6f7244769d3ce2b1022c66f23cbe063ca0
+        checksum/extra-configmaps: 2e44e493035e2f6a255d08f8104087ff10d30aef6f63176f1b18f75f73295598
+        checksum/extra-secrets: bb91ef06ddc31c0c5a29973832163d8b0b597812a793ef911d33b622bc9d1655
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      nodeSelector:
+        {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  component: worker
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      tolerations:
+        []
+      topologySpreadConstraints:
+        []
+      terminationGracePeriodSeconds: 600
+      restartPolicy: Always
+      serviceAccountName: airflow-worker
+      securityContext: 
+        runAsUser: 50000
+        fsGroup: 0
+      initContainers:
+        - name: wait-for-airflow-migrations
+          resources:
+            {}
+          image: apache/airflow:2.4.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config
+              mountPath: "/opt/airflow/airflow.cfg"
+              subPath: airflow.cfg
+              readOnly: true
+          args:          
+            - airflow
+            - db
+            - check-migrations
+            - --migration-wait-timeout=60
+          envFrom:          
+            []
+          env:          
+            # Dynamically created environment variables
+            # Dynamically created secret envs
+            # Extra env          
+            # Hard Coded Airflow Envs
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-fernet-key
+                  key: fernet-key
+            # For Airflow <2.3, backward compatibility; moved to [database] in 2.3
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW__WEBSERVER__SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-webserver-secret-key
+                  key: webserver-secret-key
+            - name: AIRFLOW__CELERY__BROKER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-broker-url
+                  key: connection
+      containers:
+        - name: worker
+          image: apache/airflow:2.4.1
+          imagePullPolicy: IfNotPresent
+          args: 
+            - bash
+            - -c
+            - |-
+              exec \
+              airflow celery worker
+          resources:
+            {}
+          livenessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 20
+            failureThreshold: 5
+            periodSeconds: 60
+            exec:
+              command:
+                  - sh
+                  - -c
+                  - CONNECTION_CHECK_MAX_COUNT=0 exec /entrypoint python -m celery --app airflow.executors.celery_executor.app inspect ping -d celery@$(hostname)
+          ports:
+            - name: worker-logs
+              containerPort: 8793
+          volumeMounts:
+            - name: logs
+              mountPath: "/opt/airflow/logs"
+            - name: config
+              mountPath: "/opt/airflow/airflow.cfg"
+              subPath: airflow.cfg
+              readOnly: true
+            - name: config
+              mountPath: "/opt/airflow/config/airflow_local_settings.py"
+              subPath: airflow_local_settings.py
+              readOnly: true
+          envFrom:          
+            []
+          env:
+            # Only signal the main process, not the process group, to make Warm Shutdown work properly
+            - name: DUMB_INIT_SETSID
+              value: "0"          
+            # Dynamically created environment variables
+            # Dynamically created secret envs
+            # Extra env          
+            # Hard Coded Airflow Envs
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-fernet-key
+                  key: fernet-key
+            # For Airflow <2.3, backward compatibility; moved to [database] in 2.3
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-airflow-metadata
+                  key: connection
+            - name: AIRFLOW__WEBSERVER__SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-webserver-secret-key
+                  key: webserver-secret-key
+            - name: AIRFLOW__CELERY__BROKER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-broker-url
+                  key: connection          
+        - name: worker-log-groomer
+          image: apache/airflow:2.4.1
+          imagePullPolicy: IfNotPresent
+          args: 
+            - bash
+            - /clean-logs
+          
+          env:
+            - name: AIRFLOW__LOG_RETENTION_DAYS
+              value: "15"
+          resources:
+            {}
+          volumeMounts:
+            - name: logs
+              mountPath: "/opt/airflow/logs"
+      volumes:
+        - name: config
+          configMap:
+            name: airflow-airflow-config
+  volumeClaimTemplates:
+    - metadata:
+        name: logs
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 100Gi
