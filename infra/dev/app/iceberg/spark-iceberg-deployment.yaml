@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.27.0 (b0ed6a2c9)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: spark-iceberg
+  name: spark-iceberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: spark-iceberg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.27.0 (b0ed6a2c9)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: spark-iceberg
+    spec:
+      containers:
+        - env:
+            - name: AWS_ACCESS_KEY_ID
+              value: admin
+            - name: AWS_REGION
+              value: us-east-1
+            - name: AWS_SECRET_ACCESS_KEY
+              value: password
+          image: tabulario/spark-iceberg
+          name: spark-iceberg
+          ports:
+            - containerPort: 8888
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /home/iceberg/warehouse
+              name: spark-iceberg-claim0
+            - mountPath: /home/iceberg/notebooks/notebooks
+              name: spark-iceberg-claim1
+      restartPolicy: Always
+      volumes:
+        - name: spark-iceberg-claim0
+          persistentVolumeClaim:
+            claimName: spark-iceberg-claim0
+        - name: spark-iceberg-claim1
+          persistentVolumeClaim:
+            claimName: spark-iceberg-claim1
+status: {}
