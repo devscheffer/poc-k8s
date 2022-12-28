@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: dremio
+  name: dremio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: dremio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: dremio
+    spec:
+      containers:
+        - image: dremio/dremio-oss
+          name: dremio
+          ports:
+            - containerPort: 9047
+            - containerPort: 31010
+            - containerPort: 32010
+            - containerPort: 45678
+          resources: {}
+          volumeMounts:
+            - mountPath: /data/dremio
+              name: dremio-claim0
+      restartPolicy: Always
+      volumes:
+        - name: dremio-claim0
+          persistentVolumeClaim:
+            claimName: dremio-claim0
+status: {}
