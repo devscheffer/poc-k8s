@@ -4,5 +4,8 @@ kind: Kustomization
 resources:
   - ./app/namespace
   - ./app/airbyte/overlays
-  - ./app/spark
+  # - ./app/airflow #wip
+  - ./app/dremio
+  - ./app/iceberg
   - ./app/jupyter-lab
+  - ./app/spark
