@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: jupyter-lab
+  name: jupyter-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: jupyter-lab
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: jupyter-lab
+    spec:
+      containers:
+        - env:
+            - name: JUPYTER_ENABLE_LAB
+              value: "yes"
+          image: jupyter/scipy-notebook
+          name: jupyter-lab
+          ports:
+            - containerPort: 8888
+          resources: {}
+          volumeMounts:
+            - mountPath: /jupyter_notebook
+              name: jupyter-lab-claim0
+      restartPolicy: Always
+      volumes:
+        - name: jupyter-lab-claim0
+          persistentVolumeClaim:
+            claimName: jupyter-lab-claim0
+status: {}

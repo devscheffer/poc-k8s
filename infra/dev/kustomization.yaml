@@ -5,3 +5,4 @@ resources:
   - ./app/namespace
   - ./app/airbyte/overlays
   - ./app/spark
+  - ./app/jupyter-lab

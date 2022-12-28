@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: jupyter-lab
+  name: jupyter-lab
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "8888"
+      port: 8888
+      targetPort: 8888
+  selector:
+    io.kompose.service: jupyter-lab
+status:
+  loadBalancer: {}

@@ -5,7 +5,7 @@ eval $(minikube docker-env)
 
 docker build -t hello:v1 .
 
-kubectl apply -f .
+kubectl apply -k .
 
 minikube tunnel
 ```

@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./jupyter-lab-deployment.yaml
+  - ./jupyter-lab-service.yaml
+  - ./jupyter-lab-claim0-persistentvolumeclaim.yaml
