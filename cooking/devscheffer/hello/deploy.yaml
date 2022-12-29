@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: hello
+  name: hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: hello
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: hello
+    spec:
+      containers:
+        - image: hello:v1
+          name: hello
+          ports:
+            - containerPort: 8080
+          resources: 
+            limits:
+              cpu: 100m
+              memory: 50Mi
+status: {}

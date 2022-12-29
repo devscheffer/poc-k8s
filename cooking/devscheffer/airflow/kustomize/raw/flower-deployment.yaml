@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.27.0 (b0ed6a2c9)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flower
+  name: flower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flower
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.27.0 (b0ed6a2c9)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: flower
+    spec:
+      containers:
+        - args:
+            - celery
+            - flower
+          env:
+            - name: AIRFLOW__API__AUTH_BACKENDS
+              value: airflow.api.auth.backend.basic_auth
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: redis://:@redis:6379/0
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: db+postgresql://airflow:airflow@postgres/airflow
+            - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
+              value: "true"
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: CeleryExecutor
+            - name: AIRFLOW__CORE__FERNET_KEY
+            - name: AIRFLOW__CORE__LOAD_EXAMPLES
+              value: "true"
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              value: postgresql+psycopg2://airflow:airflow@postgres/airflow
+            - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+              value: postgresql+psycopg2://airflow:airflow@postgres/airflow
+            - name: _PIP_ADDITIONAL_REQUIREMENTS
+          image: apache/airflow:2.5.0
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:5555/
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
+          name: flower
+          ports:
+            - containerPort: 5555
+          resources: {}
+          volumeMounts:
+            - mountPath: /opt/airflow/dags
+              name: flower-claim0
+            - mountPath: /opt/airflow/logs
+              name: flower-claim1
+            - mountPath: /opt/airflow/plugins
+              name: flower-claim2
+      restartPolicy: Always
+      volumes:
+        - name: flower-claim0
+          persistentVolumeClaim:
+            claimName: flower-claim0
+        - name: flower-claim1
+          persistentVolumeClaim:
+            claimName: flower-claim1
+        - name: flower-claim2
+          persistentVolumeClaim:
+            claimName: flower-claim2
+status: {}

@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - airflow-triggerer-deployment.yaml
+  - airflow-triggerer-claim0-persistentvolumeclaim.yaml
+  - airflow-triggerer-claim1-persistentvolumeclaim.yaml
+  - airflow-triggerer-claim2-persistentvolumeclaim.yaml

@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - mc-deployment.yaml
+  - minio-deployment.yaml
+  - minio-service.yaml
+  - rest-deployment.yaml
+  - rest-service.yaml
+  - spark-iceberg-claim0-persistentvolumeclaim.yaml
+  - spark-iceberg-claim1-persistentvolumeclaim.yaml
+  - spark-iceberg-deployment.yaml
+  - spark-iceberg-service.yaml
