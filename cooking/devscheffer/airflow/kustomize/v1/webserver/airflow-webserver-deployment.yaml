@@ -16,6 +16,8 @@ spec:
       labels:
         io.kompose.service: airflow-webserver
     spec:
+      securityContext: 
+        runAsUser: 50000
       containers:
         - args:
             - webserver
@@ -41,7 +43,7 @@ spec:
           image: apache/airflow:2.5.0
           name: airflow-webserver
           ports:
-            - containerPort: 8080
+            - containerPort: 8079
           resources: 
             limits:
               cpu: 100m

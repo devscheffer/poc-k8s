@@ -8,5 +8,10 @@ resources:
   - worker # Process that actually execute the logic of tasks
   - trigger # Process that manages special operators/sensor
   - webserver # Flask app that provides the Airflow UI
-  # - cli
-  # - flower
+  - cli
+  - flower
+
+# images:
+#   - name: apache/airflow:2.5.0
+#     newName: daiairflow
+#     newTag: v1
