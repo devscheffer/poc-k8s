@@ -24,7 +24,10 @@ spec:
             - containerPort: 31010
             - containerPort: 32010
             - containerPort: 45678
-          resources: {}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 100Mi
           volumeMounts:
             - mountPath: /data/dremio
               name: dremio-claim0

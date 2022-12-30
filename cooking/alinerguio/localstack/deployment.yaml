@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: localstack
+spec:
+  # using the selector, we will expose the running deployments
+  # this is how Kubernetes knows, that a given service belongs to a deployment
+  selector:
+    matchLabels:
+      app: localstack
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+        - name: localstack
+          image: localstack/localstack:0.8.6
+          ports:
+            # exposing s3
+            - containerPort: 31000
+            # expsosing the localstack ui
+            - containerPort: 32000
+          env:
+            # with the SERVICES environment variable, you can tell LocalStack
+            # what services to expose on what port
+            - name: SERVICES
+              value: "s3:31000"
+            - name: PORT_WEB_UI
+              value: "32000"
+          volumeMounts:
+          - name: localstack-pvc
+            mountPath: ./tmp/localstack/data
+  volumeClaimTemplates:
+    - metadata:
+        name: localstack-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 5Gi
+    

@@ -24,7 +24,10 @@ spec:
           name: jupyter-lab
           ports:
             - containerPort: 8888
-          resources: {}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 100Mi
           volumeMounts:
             - mountPath: /jupyter_notebook
               name: jupyter-lab-claim0

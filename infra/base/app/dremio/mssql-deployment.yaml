@@ -33,6 +33,9 @@ spec:
           name: mssql
           ports:
             - containerPort: 1433
-          resources: {}
+          resources: 
+            limits:
+              cpu: 150m
+              memory: 100Mi
       restartPolicy: Always
 status: {}

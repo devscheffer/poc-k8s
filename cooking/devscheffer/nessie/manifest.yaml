@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nessie
+    app.kubernetes.io/version: 0.46.2
+    helm.sh/chart: nessie-0.46.2
+  name: nessie
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nessie
+    app.kubernetes.io/version: 0.46.2
+    helm.sh/chart: nessie-0.46.2
+  name: nessie
+spec:
+  ports:
+  - name: nessie-server
+    port: 19120
+    protocol: TCP
+    targetPort: 19120
+  selector:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/name: nessie
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nessie
+    app.kubernetes.io/version: 0.46.2
+    helm.sh/chart: nessie-0.46.2
+  name: nessie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: nessie
+      app.kubernetes.io/name: nessie
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: nessie
+        app.kubernetes.io/name: nessie
+    spec:
+      containers:
+      - env:
+        - name: NESSIE_VERSION_STORE_TYPE
+          value: INMEMORY
+        - name: QUARKUS_LOG_LEVEL
+          value: INFO
+        - name: QUARKUS_CONSOLE_LOG_LEVEL
+          value: INFO
+        - name: QUARKUS_LOG_FILE_LEVEL
+          value: INFO
+        image: projectnessie/nessie:0.46.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /q/health/live
+            port: 19120
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: nessie
+        ports:
+        - containerPort: 19120
+          name: nessie-server
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /q/health/ready
+            port: 19120
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 45
+          successThreshold: 1
+          timeoutSeconds: 10
+        resources: {}
+        securityContext: {}
+      securityContext: {}
+      serviceAccountName: nessie
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    helm.sh/hook: test
+  labels:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nessie
+    app.kubernetes.io/version: 0.46.2
+    helm.sh/chart: nessie-0.46.2
+  name: nessie-test-connection
+spec:
+  containers:
+  - args:
+    - nessie:19120
+    command:
+    - wget
+    image: busybox
+    name: wget
+  initContainers:
+  - command:
+    - sleep
+    - "10"
+    image: busybox
+    name: sleep
+  restartPolicy: Never

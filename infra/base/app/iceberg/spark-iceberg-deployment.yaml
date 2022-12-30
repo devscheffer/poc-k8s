@@ -37,7 +37,10 @@ spec:
           ports:
             - containerPort: 8888
             - containerPort: 8080
-          resources: {}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 100Mi
           volumeMounts:
             - mountPath: /home/iceberg/warehouse
               name: spark-iceberg-claim0

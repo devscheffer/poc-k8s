@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    helm.sh/hook: test
+  labels:
+    app.kubernetes.io/instance: nessie
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nessie
+    app.kubernetes.io/version: 0.46.2
+    helm.sh/chart: nessie-0.46.2
+  name: nessie-test-connection
+spec:
+  containers:
+  - args:
+    - nessie:19120
+    command:
+    - wget
+    image: busybox
+    name: wget
+  initContainers:
+  - command:
+    - sleep
+    - "10"
+    image: busybox
+    name: sleep
+  restartPolicy: Never
+

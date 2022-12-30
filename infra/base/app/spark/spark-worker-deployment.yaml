@@ -35,6 +35,9 @@ spec:
               value: 1G
           image: docker.io/bitnami/spark:3.3
           name: spark-worker
-          resources: {}
+          resources: 
+            limits:
+              cpu: 150m
+              memory: 100Mi
       restartPolicy: Always
 status: {}

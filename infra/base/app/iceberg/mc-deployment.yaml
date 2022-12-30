@@ -37,6 +37,9 @@ spec:
               value: password
           image: minio/mc
           name: mc
-          resources: {}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 100Mi
       restartPolicy: Always
 status: {}

@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    chart: airflow-1.7.0
+    component: scheduler
+    executor: CeleryExecutor
+    heritage: Helm
+    release: airflow
+    tier: airflow
+  name: airflow-scheduler
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: scheduler
+      release: airflow
+      tier: airflow
+  template:
+    metadata:
+      annotations:
+        checksum/airflow-config: 22aecc0aac0878def48c3aee99162a6f7244769d3ce2b1022c66f23cbe063ca0
+        checksum/extra-configmaps: 2e44e493035e2f6a255d08f8104087ff10d30aef6f63176f1b18f75f73295598
+        checksum/extra-secrets: bb91ef06ddc31c0c5a29973832163d8b0b597812a793ef911d33b622bc9d1655
+        checksum/metadata-secret: ae9b3f69ed343fffaa86b4ca5326b5d4f16c6f6f7b51a09a87dfce51dc81a4fa
+        checksum/pgbouncer-config-secret: da52bd1edfe820f0ddfacdebb20a4cc6407d296ee45bcb500a6407e2261a5ba2
+        checksum/result-backend-secret: 74e3e99feee51248d44224665d60fab543dd6b25ba95f04e6fcb0e5758342056
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        component: scheduler
+        release: airflow
+        tier: airflow
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  component: scheduler
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - bash
+        - -c
+        - exec airflow scheduler
+        env:
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: fernet-key
+              name: airflow-fernet-key
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW_CONN_AIRFLOW_DB
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: webserver-secret-key
+              name: airflow-webserver-secret-key
+        - name: AIRFLOW__CELERY__BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-broker-url
+        envFrom: []
+        image: apache/airflow:2.4.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              CONNECTION_CHECK_MAX_COUNT=0 AIRFLOW__LOGGING__LOGGING_LEVEL=ERROR exec /entrypoint \
+              airflow jobs check --job-type SchedulerJob --hostname $(hostname)
+          failureThreshold: 5
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 20
+        name: scheduler
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/airflow/pod_templates/pod_template_file.yaml
+          name: config
+          readOnly: true
+          subPath: pod_template_file.yaml
+        - mountPath: /opt/airflow/logs
+          name: logs
+        - mountPath: /opt/airflow/airflow.cfg
+          name: config
+          readOnly: true
+          subPath: airflow.cfg
+        - mountPath: /opt/airflow/config/airflow_local_settings.py
+          name: config
+          readOnly: true
+          subPath: airflow_local_settings.py
+      - args:
+        - bash
+        - /clean-logs
+        env:
+        - name: AIRFLOW__LOG_RETENTION_DAYS
+          value: "15"
+        image: apache/airflow:2.4.1
+        imagePullPolicy: IfNotPresent
+        name: scheduler-log-groomer
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/airflow/logs
+          name: logs
+      initContainers:
+      - args:
+        - airflow
+        - db
+        - check-migrations
+        - --migration-wait-timeout=60
+        env:
+        - name: AIRFLOW__CORE__FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: fernet-key
+              name: airflow-fernet-key
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW_CONN_AIRFLOW_DB
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-airflow-metadata
+        - name: AIRFLOW__WEBSERVER__SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: webserver-secret-key
+              name: airflow-webserver-secret-key
+        - name: AIRFLOW__CELERY__BROKER_URL
+          valueFrom:
+            secretKeyRef:
+              key: connection
+              name: airflow-broker-url
+        envFrom: []
+        image: apache/airflow:2.4.1
+        imagePullPolicy: IfNotPresent
+        name: wait-for-airflow-migrations
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/airflow/airflow.cfg
+          name: config
+          readOnly: true
+          subPath: airflow.cfg
+      nodeSelector: {}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 0
+        runAsUser: 50000
+      serviceAccountName: airflow-scheduler
+      terminationGracePeriodSeconds: 10
+      tolerations: []
+      topologySpreadConstraints: []
+      volumes:
+      - configMap:
+          name: airflow-airflow-config
+        name: config
+      - emptyDir: {}
+        name: logs
+

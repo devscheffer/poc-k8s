@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - airflow-airflow-config-configmap.yaml
+  - airflow-pod-log-reader-role-role.yaml
+  - airflow-airflow-metadata-secret.yaml
+  - airflow-pod-log-reader-rolebinding-rolebinding.yaml
+  - airflow-broker-url-secret.yaml
+  - airflow-postgresql-headless-service.yaml
+  - airflow-create-user-job-serviceaccount.yaml
+  - airflow-postgresql-secret.yaml
+  - airflow-create-user-job.yaml
+  - airflow-postgresql-service.yaml
+  - airflow-fernet-key-secret.yaml
+  - airflow-postgresql-statefulset.yaml
+  - airflow-migrate-database-job-serviceaccount.yaml
+  - airflow-redis-password-secret.yaml
+  - airflow-pod-launcher-role-role.yaml
+  - airflow-redis-service.yaml
+  - airflow-pod-launcher-rolebinding-rolebinding.yaml
+  - airflow-redis-serviceaccount.yaml
+  - airflow-redis-statefulset.yaml
+  - airflow-run-airflow-migrations-job.yaml
+  - airflow-scheduler-deployment.yaml
+  - airflow-scheduler-serviceaccount.yaml
+  - airflow-statsd-configmap.yaml
+  - airflow-statsd-deployment.yaml
+  - airflow-statsd-service.yaml
+  - airflow-statsd-serviceaccount.yaml
+  - airflow-triggerer-deployment.yaml
+  - airflow-triggerer-serviceaccount.yaml
+  - airflow-webserver-deployment.yaml
+  - airflow-webserver-secret-key-secret.yaml
+  - airflow-webserver-service.yaml
+  - airflow-webserver-serviceaccount.yaml
+  - airflow-worker-service.yaml
+  - airflow-worker-serviceaccount.yaml
+  - airflow-worker-statefulset.yaml

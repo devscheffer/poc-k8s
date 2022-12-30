@@ -39,6 +39,9 @@ spec:
           ports:
             - containerPort: 9001
             - containerPort: 9000
-          resources: {}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 100Mi
       restartPolicy: Always
 status: {}
